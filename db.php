@@ -17,15 +17,18 @@ function find($table, $arg)
 {
     global $pdo;
 
+    $sql = "SELECT * FROM `{$table}` WHERE ";
+
     if (is_array($arg)) {
+
         foreach ($arg as $key => $value) {
             $tmp[] = "`$key`='{$value}'";
         }
 
-
-        $sql = "SELECT * FROM `{$table}` WHERE " . join(" && ", $tmp);
+        $sql .= join(" && ", $tmp);
     } else {
-        $sql = "SELECT * FROM `{$table}` WHERE `id`='{$arg}'";
+
+        $sql .= " `id`='{$arg}'";
     }
 
     //echo $sql;
