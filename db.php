@@ -13,10 +13,23 @@ function all($table, $where)
     return $rows;
 }
 
-function find($id)
+function find($table, $arg)
 {
     global $pdo;
-    $sql = "SELECT * FROM `dept` WHERE `id`='{$id}'";
+
+    if (is_array($arg)) {
+        foreach ($arg as $key => $value) {
+            $tmp[] = "`$key`='{$value}'";
+        }
+
+
+        $sql = "SELECT * FROM `{$table}` WHERE " . join(" && ", $tmp);
+    } else {
+        $sql = "SELECT * FROM `{$table}` WHERE `id`='{$arg}'";
+    }
+
+    //echo $sql;
+
     $row = $pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
 
     return $row;
