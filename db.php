@@ -62,14 +62,14 @@ function update($table, $cols, $arg)
 
     if (is_array($arg)) {
         foreach ($arg as $key => $value) {
-            $tmp[] = "`$key`='{$value}'";
+            $tt[] = "`$key`='{$value}'";
         }
 
-        $sql .= "WHERE " . join(" && ", $tmp);
+        $sql .= " WHERE " . join(" && ", $tt);
     } else {
-        $sql .= "WHERE `id`='{$arg}'";
+        $sql .= " WHERE `id`='{$arg}'";
     }
-
+    echo $sql;
     return $pdo->exec($sql);
 }
 
