@@ -21,9 +21,7 @@ function find($table, $arg)
 
     if (is_array($arg)) {
 
-        foreach ($arg as $key => $value) {
-            $tmp[] = "`$key`='{$value}'";
-        }
+        $tmp = array2sql($arg);
 
         $sql .= join(" && ", $tmp);
     } else {
@@ -37,6 +35,20 @@ function find($table, $arg)
 
     return $row;
 }
+
+
+function save($table, $array)
+{
+
+    if (isset($array['id'])) {
+        //update
+        update($table, $array, $array['id']);
+    } else {
+        //insert
+        insert($table, $array);
+    }
+}
+
 
 /**
  * 更新資料表中的資料
@@ -54,16 +66,12 @@ function update($table, $cols, $arg)
     $sql = "UPDATE `{$table}` SET ";
 
     //使用迴圈將欄位名稱和值組合成字串
-    foreach ($cols as $key => $value) {
-        $tmp[] = "`$key`='{$value}'";
-    }
+    $tmp = array2sql($cols);
 
     $sql .= join(",", $tmp);
 
     if (is_array($arg)) {
-        foreach ($arg as $key => $value) {
-            $tt[] = "`$key`='{$value}'";
-        }
+        $tt = array2sql($arg);
 
         $sql .= " WHERE " . join(" && ", $tt);
     } else {
@@ -95,9 +103,7 @@ function del($table, $arg)
     $sql = "DELETE FROM `{$table}` WHERE ";
 
     if (is_array($arg)) {
-        foreach ($arg as $key => $value) {
-            $tmp[] = "`$key`='{$value}'";
-        }
+        $tmp = array2sql($arg);
 
         $sql .= join(" && ", $tmp);
     } else {
@@ -105,6 +111,21 @@ function del($table, $arg)
     }
 
     return $pdo->exec($sql);
+}
+
+function array2sql($array)
+{
+    foreach ($array as $key => $value) {
+        $tmp[] = "`$key`='$value'";
+    }
+
+    return $tmp;
+}
+
+function q($sql)
+{
+    global $pdo;
+    return $pdo->query($sql)->fetchAll();
 }
 
 /**
