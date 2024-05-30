@@ -1,5 +1,17 @@
 <?php
 
+echo sum(10, 25);
+
+function sum(...$args)
+{
+    $sum = 0;
+    foreach ($args as $arg) {
+        $sum += $arg;
+    }
+    return $sum;
+}
+
+
 /**
  * 在頁面上快速顯示陣列內容
  * direct dump
