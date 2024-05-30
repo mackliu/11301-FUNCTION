@@ -14,7 +14,7 @@ include_once "db.php";
 <body>
     <?php
 
-    dd(all());
+    dd(all('students', " WHERE `id`<5"));
     dd(find(3));
 
     ?>

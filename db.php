@@ -3,10 +3,11 @@
 $dsn = "mysql:host=localhost;charset=utf8;dbname=school";
 $pdo = new PDO($dsn, 'root', '');
 
-function all()
+
+function all($table, $where)
 {
     global $pdo;
-    $sql = "SELECT * FROM `dept`";
+    $sql = "SELECT * FROM `{$table}` {$where}";
     $rows = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
     return $rows;
