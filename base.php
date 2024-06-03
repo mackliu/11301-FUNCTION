@@ -24,7 +24,7 @@ class DB
         if (!empty($arg[1])) {
             $sql = $sql . $arg[1];
         }
-        echo $sql;
+        //echo $sql;
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -62,12 +62,11 @@ class DB
         } else {
             //insert
             $sql = "INSERT INTO `{$this->table}` ";
-
             $sql .= "(`" . join("`,`", array_keys($array)) . "`)";
 
             $sql .= " VALUES('" . join("','", $array) . "')";
         }
-        //echo $sql;
+        echo $sql;
         return $this->pdo->exec($sql);
     }
 
@@ -85,6 +84,21 @@ class DB
         }
 
         return $this->pdo->exec($sql);
+    }
+
+    function count(...$arg)
+    {
+        $sql = "SELECT COUNT(*) FROM `{$this->table}`";
+
+        if (!empty($arg[0]) && is_array($arg[0])) {
+            $tmp = $this->array2sql($arg[0]);
+            $sql = $sql . " where " . implode(" && ", $tmp);
+        }
+        if (!empty($arg[1])) {
+            $sql = $sql . $arg[1];
+        }
+
+        return $this->pdo->query($sql)->fetchColumn();
     }
 
     protected  function array2sql($array)
@@ -118,6 +132,12 @@ function dd($array)
 
 $Student = new DB('students');
 $Dept = new DB('dept');
-echo "<pre>";
-$Dept->del(21);
-echo "</pre>";
+/* $dept = $Dept->find(2);
+
+$dept['name'] = '電子商務系';
+
+
+$Dept->save($dept);
+ */
+
+echo $Student->count(['dept' => 2]);
