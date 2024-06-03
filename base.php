@@ -16,14 +16,7 @@ class DB
     public function all(...$arg)
     {
         $sql = "select * from $this->table ";
-
-        if (!empty($arg[0]) && is_array($arg[0])) {
-            $tmp = $this->array2sql($arg[0]);
-            $sql = $sql . " where " . implode(" && ", $tmp);
-        }
-        if (!empty($arg[1])) {
-            $sql = $sql . $arg[1];
-        }
+        $sql = $this->select($sql, ...$arg);
         //echo $sql;
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -86,17 +79,19 @@ class DB
         return $this->pdo->exec($sql);
     }
 
+    function math($math, $col, ...$arg)
+    {
+        $sql = "SELECT $math(`$col`) FROM `{$this->table}`";
+        $sql = $this->select($sql, ...$arg);
+
+        //echo $sql;
+        return $this->pdo->query($sql)->fetchColumn();
+    }
+
     function count(...$arg)
     {
         $sql = "SELECT COUNT(*) FROM `{$this->table}`";
-
-        if (!empty($arg[0]) && is_array($arg[0])) {
-            $tmp = $this->array2sql($arg[0]);
-            $sql = $sql . " where " . implode(" && ", $tmp);
-        }
-        if (!empty($arg[1])) {
-            $sql = $sql . $arg[1];
-        }
+        $sql = $this->select($sql, ...$arg);
 
         return $this->pdo->query($sql)->fetchColumn();
     }
@@ -108,6 +103,20 @@ class DB
         }
 
         return $tmp;
+    }
+
+    protected function select($sql, ...$arg)
+    {
+        if (!empty($arg[0]) && is_array($arg[0])) {
+            $tmp = $this->array2sql($arg[0]);
+            $sql = $sql . " where " . implode(" && ", $tmp);
+        }
+
+        if (!empty($arg[1])) {
+            $sql = $sql . $arg[1];
+        }
+
+        return $sql;
     }
 
     function q($sql)
@@ -141,3 +150,5 @@ $Dept->save($dept);
  */
 
 echo $Student->count(['dept' => 2]);
+echo "<br>";
+echo $Student->math('max', 'graduate_at');
