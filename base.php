@@ -31,9 +31,38 @@ class DB
         echo $sql;
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
+
+
+    function find($arg)
+    {
+        $sql = "SELECT * FROM `{$this->table}` WHERE ";
+
+        if (is_array($arg)) {
+
+            $tmp = $this->array2sql($arg);
+
+            $sql .= join(" && ", $tmp);
+        } else {
+
+            $sql .= " `id`='{$arg}'";
+        }
+
+        echo $sql;
+
+        return $this->pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
+    }
+
+    protected  function array2sql($array)
+    {
+        foreach ($array as $key => $value) {
+            $tmp[] = "`$key`='$value'";
+        }
+
+        return $tmp;
+    }
 }
 
 $Student = new DB('students');
 echo "<pre>";
-print_r($Student->all());
+print_r($Student->find(['name' => '孔琇榆']));
 echo "</pre>";
